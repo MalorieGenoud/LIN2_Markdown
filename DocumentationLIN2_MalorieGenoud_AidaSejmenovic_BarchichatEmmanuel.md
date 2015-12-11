@@ -54,6 +54,8 @@ Pour installer **Nginx** il faut utiliser la commande suivante :
 
 `   ~# apt-get install nginx   `
 
+Il est possible qu'il vous demande s'il faut installer les paquets sans vérification. Vous pouvez sans autre lui dire "oui".
+
 Maintenant on va démarrer le service : 
 
 `   ~# service nginx start   `
@@ -64,10 +66,14 @@ On peut vérifier nos informations en pointant un moteur de recherche sur notre 
 
 Pour la configuration, on ouvre le host virtuel avec la commande suivante : 
 
-`   ~# nano /etc/nginx/conf.d/default .conf  `
+`   ~# nano /etc/nginx/conf.d/default.conf  `
 
-Il faut changer certaines lignes du fichier, notamment le nom du serveur qui est actuellement `   localhost   `. Il faut donc le changer par le votre, par exemple **cpnv.webapp**.
-Voilà ce que vous devriez avoir à peu près : 
+Il faut changer certaines lignes du fichier, notamment le nom du serveur qui est actuellement `   localhost   `. Il faut donc le changer votre nom d'hôte que vous avez mis lors de l'installation de votre machine, par exemple **cpnv.webapp**.
+Pour savoir votre nom d'hôte tapez la commande suivante :
+
+`   ~# nano /etc/hosts   `
+
+Voilà ce que vous devriez avoir une fois les lignes changées : 
 
       [...]
       server {
@@ -148,9 +154,11 @@ Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédem
 
 Maintenant que tout a été configuré, nous pouvons créer un fichier d'informations. Voici la commande à taper :
 
-`   ~# touch /usr/share/ngnix/html/info.php   `   
+`   ~# cd /usr/share/ngnix/html   `
 
-`   ~# nano /usr/share/nginx/html/info.php   `
+`   ~# touch info.php   `   
+
+`   ~# nano info.php   `
 
 Il est possible qu'à la place du dossier `   html   ` vous ayez un dossier nommer `   www   `. Mais le principe reste le même.
 
@@ -389,6 +397,12 @@ Voici le résultat obtenu :
      1 row in set (0.00 sec)
 
 
+##   Vérification des status de toutes les installations faites
+
+Afin de vérifier que tout est bon, il faut utiliser la commande suivante:
+
+`   ~# service --status-all   `
+
 
 
 ##   Création du répertoire pour les utilisateurs et gestions des droits
@@ -446,6 +460,7 @@ Voici les différentes étapes pour la création d'un utilisateur :
 ## Liens pour l'installation des packages
 
 [Lien 1](http://linuxconfig.org/debian-apt-get-jessie-sources-list)
+
 [Lien 2](http://nginx.org/en/linux_packages.html)
 
 
