@@ -1,6 +1,6 @@
 #   Configuration d'un hébergement de site Web
 
-Avant de faire une quelconque installation, il faut disposer d'une machine Linux sous la distribution Debian 8.0.
+**!!! TOUTE L'INSTALLATION À ÉTÉ FAITE SUR DEBIAN 8 !!!**
 
 Pour procéder aux différentes installations, il faut être connecté en **root**.
 
