@@ -140,6 +140,12 @@ Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédem
 
 `~# service php5-fpm restart`
 
+On commence par déclarer le socket Unix de PHP-FPM au niveau de Nginx pour que celui-ci puisse lui transmettre les requêtes PHP qu’il reçoit dans le fichier `/etc/nginx/conf.d/php5-fpm.conf`. Voici ce qu'il faut ajouter dans le fichier:
+
+     upstream php5-fpm-sock {
+        server unix:/var/run/php5-fpm.sock;
+     }
+
 Maintenant que tout a été configuré, nous pouvons créer un fichier d'informations. Voici la commande à taper :
 
 `~# cd /usr/share/ngnix/html`
@@ -294,8 +300,6 @@ Dans le répertoire `mkdir /home/Applications/` nous allons créer le répertoir
 Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
 
 `~# chown NameUser /home/Applications/NameUser_Webapp`
-
-### Utilisateur PHP-FPM
 
 
 ### Utilisateur MariaDB
