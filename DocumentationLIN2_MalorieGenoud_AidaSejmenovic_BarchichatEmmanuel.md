@@ -14,11 +14,11 @@ Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pou
 
 [Télécharger Debian 8](https://www.debian.org/CD/http-ftp/#stable)
 
-Une fois que vous avez cliquez sur le lien, choisissez dans la partie **CD** le lien **amd64** puis choisissez une des lien d'images ISO disponible
+Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le lien **amd64** puis choisissez un des liens d'images ISO disponibles
 
 **Mémoire:** 2GB
 
-**Nombre de processeurs:** 1
+**Processeurs:** 1
 
 **Disque dur:** 60 GB
 
@@ -61,7 +61,7 @@ Commençons par installer **OpenSSH** avec la commande suivante :
 
 `~# apt-get install openssh-server`
 
-Maintenant on va faire une petite configuration du serveur car avec les dernière versions, il y a déjà une bonne configuration au niveau de la sécurité.
+Maintenant on va faire une petite configuration du serveur car avec les dernières versions, il y a déjà une bonne configuration au niveau de la sécurité.
 
 On va commencer par éditer le fichier **sshd_config** :
 
@@ -69,7 +69,7 @@ On va commencer par éditer le fichier **sshd_config** :
 
 On va modifier la ligne `PermitRootLogin   without-password` et remplacer le paramètre `without-password` par le paramètre `no` afin d'éviter une quelconque connexion avec l'utilisateur **root**.
 
-Une fois le fichier sauvegarder, on va recharger la configuration ssh :
+Une fois le fichier sauvegardé, on va recharger la configuration ssh :
 
 `~# /etc/init.d/ssh reload`
 
@@ -94,8 +94,8 @@ Pour la configuration, on ouvre le host virtuel avec la commande suivante :
 
 `~# nano /etc/nginx/conf.d/default.conf`
 
-Il faut changer certaines lignes du fichier, notamment le nom du serveur qui est actuellement `localhost`. Il faut donc le changer votre nom d'hôte que vous avez mis lors de l'installation de votre machine, par exemple **cpnv.webapp**.
-Pour savoir votre nom d'hôte tapez la commande suivante :
+Il faut changer certaines lignes du fichier, notamment le nom de votre serveur qui est dans l'exemple ci-dessous `NameServer`.
+Pour savoir votre nom de serveur et de hôte si besoin tapez la commande suivante :
 
 `~# nano /etc/hosts`
 
@@ -104,48 +104,13 @@ Voilà ce que vous devriez avoir une fois les lignes changées :
       [...]
       server {
       listen       80;
-      server_name  cpnv.webapp;
-
-      #charset koi8-r;
-      #access_log  /var/log/nginx/log/host.access.log  main;
+      server_name  NameServer;
 
       location / {
           root   /usr/share/nginx/html;
           index index.php index.html index.htm index.nginx-debian.html;
       }
-
-      #error_page  404              /404.html;
-
-      # redirect server error pages to the static page /50x.html
-      #
-      error_page   500 502 503 504  /50x.html;
-      location = /50x.html {
-          root   /usr/share/nginx/html;
-      }
-
-      # proxy the PHP scripts to Apache listening on 127.0.0.1:80
-      #
-      #location ~ \.php$ {
-      #    proxy_pass   http://127.0.0.1;
-      #}
-
-      # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
-      #
-      #location ~ \.php$ {
-      #    root           html;
-      #    fastcgi_pass   127.0.0.1:9000;
-      #    fastcgi_index  index.php;
-      #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
-      #    include        fastcgi_params;
-      #}
-
-      # deny access to .htaccess files, if Apache's document root
-      # concurs with nginx's one
-      #
-      #location ~ /\.ht {
-      #    deny  all;
-      #}
-      }
+     }
       [...]
 
 
@@ -192,11 +157,11 @@ Redémarrez le serveur **Nginx** avec la commande suivante :
 
 ## Installer et configurer MariaDB
 
-Dans cette partie, il est possible d'installer de clé **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clé **GPG** :
+Dans cette partie, il est possible d'installer des clés **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clés **GPG** :
 
 [Clé GPG](http://korben.info/keyserver-ubuntu-com-inaccessible-que-faire.html )
 
-Afin d'être sûr d'avoir les dernières mise à jour des dépôts, nous allons faire une nouvelle mise à jour :
+Afin d'être sûr d'avoir les dernières mises à jour des dépôts, nous allons faire une nouvelle mise à jour :
 
 `~# apt-get update`
 
@@ -221,17 +186,58 @@ Voici ce que vous devriez obtenir :
 
 ### Utilisation des diverses commandes dans MariaDB
 
+Dans cette partie, il est possible d'installer des clés **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clés **GPG** :
+
+[Clé GPG](http://korben.info/keyserver-ubuntu-com-inaccessible-que-faire.html )
+
+Afin d'être sûr d'avoir les dernières mises à jour des dépôts, nous allons faire une nouvelle mise à jour :
+
+`~# apt-get update`
+
+`~# apt-get upgrade`
+
+Voici la commande pour installer la base de données du côté serveur et du côté client :
+
+`~# apt-get install mariadb-server mariadb-client`
+
+À la suite de ça une fenêtre va s'ouvrir et demander l'ajout d'un mot de passe. Il est important de se souvenir de ce mot de passe car il sera réutilisé plus tard pour la connexion à la base de données.
+
+Exemple de mot de passe : `D08x97H$`
+
+Si l'installation se passe bien, vous pouvez vérifier la version de **MariaDB** afin d'être sûr que vous disposiez de la dernière version :
+
+`~# mysql -V`
+
+Voici ce que vous devriez obtenir :
+
+`mysql  Ver 15.1 Distrib 10.0.22-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
+
+
+###   Utilisation des diverses commandes dans MariaDB
+
 Nous allons apprendre à utiliser quelques commandes de **MariaDB**.
 
 Tout d'abord, il faut se connecter à la base de données en tant que **root** afin de pouvoir créer un utilisateur :
 
 `~# mysql -u root -p`
 
-Une fois cette commande taper, un mot de passe va être demandé.
+Une fois cette commande tapée, un mot de passe va être demandé.
 
-**ATTENTION LE MOT DE PASSE N'EST PAS LE MOT DE PASSE DE L'UTILISATEUR ROOT MAIS CELUI QUI A ÉTÉ MIS LORS DE L'INSTALLATION DE MARIADB**
+**ATTENTION LE MOT DE PASSE N'EST PAS LE MOT DE PASSE DE L'UTILISATEUR ROOT, MAIS CELUI QUI A ÉTÉ MIS LORS DE L'INSTALLATION DE MARIADB**
 
-Une fois connectez avec l'utilisateur créer précédemment, on va afficher les différentes bases de données actuelles :
+Pour chaque utilisateur qui sera créé par la suite, chacun aura accès seulement à sa propre base de données.
+
+Commande pour créer un utilisateur :
+
+`MariaDB [(none)]> CREATE USER 'NameUser' IDENTIFIED BY 'NameUser';`
+
+Maintenant quittez la base de données et connectez-vous avec l'utilisateur créé :
+
+`MariaDB [(none)] exit`
+
+`~# mysql -u NameUser -p`
+
+Une fois connecté avec l'utilisateur créer précédemment, on va afficher les différentes bases de données actuelles :
 
 `MariaDB[(none)]> SHOW DATABASES;`
 
@@ -250,7 +256,7 @@ Voici la commande à faire pour créer une base de données :
 
 `MariaDB [mysql]> CREATE DATABASE NameDataBase;`
 
-On va maintenant créer une table **user** dans cette base de données :
+Pour créer une table **user** dans cette base de données, on utilisera la commande suivante :
 
 `MariaDB [mysql]> CREATE TABLE user;`
 
@@ -298,7 +304,6 @@ Maintenant quittez la base de données et connectez-vous avec l'utilisateur cré
 
 
 # Source d'installation et de configuration
-
 
 ## Liens pour l'installation des packages
 
