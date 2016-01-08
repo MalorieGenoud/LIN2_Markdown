@@ -113,6 +113,10 @@ Voilà ce que vous devriez avoir une fois les lignes changées :
      }
       [...]
 
+Il reste une dernière étape à faire. Il faut maintenant ajouter **Nginx** au groupe des utilisateurs qui seront créer plus tard. Voici la commande:
+
+`~# chown -R www-data:NameGroup /var/log/nginx && chmod g+s /var/log/nginx`
+
 
 ## Installer et configurer PHP-FPM
 
@@ -130,7 +134,7 @@ Il y a une dernière vérification à faire avant de passer à la suite. Utilise
 
 `~# nano /etc/php5/fpm/pool.d/www.conf`
 
-Vous devez chercher et vérifier si la ligne suivante est écrite ainsi `listen = /var/run/php5-fpm.sock`. Ceci permettra de faire en sorte qu'il ne va pas "écouter" sur le réseau local mais sur son propre réseau. Si c'est le cas, ne changez pas la ligne. Par contre si ce n'est pas le cas, vous devriez avoir cette ligne-ci à la place `listen = 127.0.0.1:9000`, remplacez-la par `listen = /var/run/php5-fpm.sock`.
+Vous devez chercher et vérifier si la ligne suivante est écrite ainsi `listen = /var/run/php5-fpm.sock`. Ceci permettra de faire en sorte qu'il ne va pas "écouter" sur le réseau local mais sur un socket Unix. Si c'est le cas, ne changez pas la ligne. Par contre si ce n'est pas le cas, vous devriez avoir cette ligne-ci à la place `listen = 127.0.0.1:9000`, remplacez-la par `listen = /var/run/php5-fpm.sock`.
 
 Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédemment, nous allons le redémarrer. Voici la commande à taper :
 
@@ -276,6 +280,12 @@ Il faut créer un répertoire qui regroupera tous les sites Web des utilisateurs
 Voici la commande à utiliser pour la création d'un utilisateur :
 
 `~# adduser NameUser`
+
+On va maintenant créer un groupe commun à tous les utilisateurs et les ajouter dans ce groupe. Voici les commandes:
+
+`~# groupadd -g NameGroup`
+
+`~# usermod -g NameGroup NameUser`
 
 Dans le répertoire `mkdir /home/Applications/` nous allons créer le répertoire Webapp pour l'utilisateur créé:
 
