@@ -4,7 +4,7 @@
 
 **Version Debian utilisée:** 8
 
-#   Configuration d'un hébergement de site Web
+# Configuration d'un hébergement de site Web
 
 **!!! TOUTE L'INSTALLATION A ÉTÉ FAITE SUR DEBIAN 8 EN "FROM SCRATCH" !!!**
 
@@ -48,8 +48,14 @@ Il faut sauvegarder le fichier et lancer la commande suivante afin de faire la m
 
 Ces commandes éviterons quelques soucis lors de l'installation des différents services à l'avenir.
 
+Afin de faire en sorte que chacun des utilisateurs qui seront créés ne puissent pas accéder aux répertoires des autres utilisateurs, il faut modifier le umask de façon permanente. Voici la commande à faire:
 
-##   Installer et configurer le serveur OpenSSH
+`~# nano ~/.bashrc`
+
+Il faut ensuite changer la valeur par défaut du umask par `077`
+
+
+## Installer et configurer le serveur OpenSSH
 
 Commençons par installer **OpenSSH** avec la commande suivante :
 
@@ -68,7 +74,7 @@ Une fois le fichier sauvegarder, on va recharger la configuration ssh :
 `~# /etc/init.d/ssh reload`
 
 
-##   Installer et configurer Nginx
+## Installer et configurer Nginx
 
 Pour installer **Nginx** il faut utiliser la commande suivante :
 
@@ -143,7 +149,7 @@ Voilà ce que vous devriez avoir une fois les lignes changées :
       [...]
 
 
-##   Installer et configurer PHP-FPM
+## Installer et configurer PHP-FPM
 
 Pour installer **PHP-FPM** il faut utiliser la commande suivante :
 
@@ -184,7 +190,7 @@ Redémarrez le serveur **Nginx** avec la commande suivante :
 `~# service nginx restart`
 
 
-##   Installer et configurer MariaDB
+## Installer et configurer MariaDB
 
 Dans cette partie, il est possible d'installer de clé **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clé **GPG** :
 
@@ -213,7 +219,7 @@ Voici ce que vous devriez obtenir :
 `mysql  Ver 15.1 Distrib 10.0.22-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
 
 
-###   Utilisation des diverses commandes dans MariaDB
+### Utilisation des diverses commandes dans MariaDB
 
 Nous allons apprendre à utiliser quelques commandes de **MariaDB**.
 
@@ -224,18 +230,6 @@ Tout d'abord, il faut se connecter à la base de données en tant que **root** a
 Une fois cette commande taper, un mot de passe va être demandé.
 
 **ATTENTION LE MOT DE PASSE N'EST PAS LE MOT DE PASSE DE L'UTILISATEUR ROOT MAIS CELUI QUI A ÉTÉ MIS LORS DE L'INSTALLATION DE MARIADB**
-
-Pour chaque utilisateur qui sera créé par la suite, chacun aura accès seulement à sa propre base de données.
-
-Commande pour créer un utilisateur :
-
-`MariaDB [(none)]> CREATE USER 'NameUser' IDENTIFIED BY 'NameUser';`
-
-Maintenant quittez la base de données et connectez-vous avec l'utilisateur créé :
-
-`MariaDB [(none)] exit`
-
-`~# mysql -u NameUser -p`
 
 Une fois connectez avec l'utilisateur créer précédemment, on va afficher les différentes bases de données actuelles :
 
@@ -267,7 +261,7 @@ Tapez la commande suivante pour voir les droits sur un ou tous les utilisateurs 
 
 ## Création des différents utilisateurs
 
-### utilisateur standard
+### Utilisateur standard
 
 Il faut créer un répertoire qui regroupera tous les sites Web des utilisateurs. Il faut utiliser la commande suivante :
 
@@ -290,20 +284,30 @@ Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
 
 ### Utilisateur MariaDB
 
+Pour chaque utilisateur qui sera créé par la suite, chacun aura accès seulement à sa propre base de données.
+
+Commande pour créer un utilisateur :
+
+`MariaDB [(none)]> CREATE USER 'NameUser' IDENTIFIED BY 'NameUser';`
+
+Maintenant quittez la base de données et connectez-vous avec l'utilisateur créé :
+
+`MariaDB [(none)] exit`
+
+`~# mysql -u NameUser -p`
 
 
+# Source d'installation et de configuration
 
-#   Source d'installation et de configuration
 
-
-##  Liens pour l'installation des packages
+## Liens pour l'installation des packages
 
 [Lien 1](http://linuxconfig.org/debian-apt-get-jessie-sources-list)
 
 [Lien 2](http://nginx.org/en/linux_packages.html)
 
 
-###   OpenSSH
+### OpenSSH
 
 [Lien 1](https://openclassrooms.com/courses/installation-et-utilisation-d-un-serveur-ssh-sous-debian-etch)
 
@@ -314,16 +318,16 @@ Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
 [Lien 4](http://doc.ubuntu-fr.org/ssh)
 
 
-###   Ngnix
+### Ngnix
 
 [Lien 1](https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-debian-7)
 
 
-###   PHP-FPM
+### PHP-FPM
 
 [Lien 1](https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-on-debian-7)
 
 
-###   MariaDB
+### MariaDB
 
 [Lien 1](https://mariadb.com/kb/en/mariadb/configuring-mariadb-for-remote-client-access/)
