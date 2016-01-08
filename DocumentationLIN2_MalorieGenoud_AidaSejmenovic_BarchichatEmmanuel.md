@@ -6,8 +6,6 @@
 
 # Configuration d'un hébergement de site Web
 
-**!!! TOUTE L'INSTALLATION A ÉTÉ FAITE SUR DEBIAN 8 EN "FROM SCRATCH" !!!**
-
 ## Installation de la machine virtuelle
 
 Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pour télécharger l'image ISO:
@@ -34,7 +32,7 @@ Une fois la configuration faite, vous pouvez démarrer la machine virtuelle. Voi
 
 **N'INSTALLEZ PAS D'INTERFACE GRAPHIQUE! FAÎTES UNE SIMPLE INSTALLATION!**
 
-**Langue** À choix
+**Langue:** À choix
 
 **Situation géographique:** Â choix
 
@@ -62,11 +60,11 @@ Une fois la configuration faite, vous pouvez démarrer la machine virtuelle. Voi
 
 Pour procéder aux différents réglages, il faut être connecté en **root**.
 
-Dans un premier temps, nous allons modifier quelques lignes dans le fichier **sources.list** afin d'avoir les mêmes dépots qui se synchronisent:
+Dans un premier temps, modifiez quelques lignes dans le fichier **sources.list** afin d'avoir les mêmes dépots qui se synchronisent:
 
 `~# nano /etc/apt/sources.list`
 
-Il faut commenter la `deb cdrom:[...]` en mettant **#** au début et ajouter les lignes suivantes :
+Commentez la `deb cdrom:[...]` en mettant **#** au début et ajoutez les lignes suivantes :
 
 `deb http://nginx.org/packages/debian/ jessie nginx`
 
@@ -371,7 +369,7 @@ Commande pour créer un utilisateur :
 
 `MariaDB [(none)]> CREATE USER 'NameUser' IDENTIFIED BY 'NameUser';`
 
-Maintenant quittez la base de données et connectez-vous avec l'utilisateur créé :
+Vous pouvez quitter la base de données et connectez-vous avec l'utilisateur créé :
 
 `MariaDB [(none)] exit`
 
