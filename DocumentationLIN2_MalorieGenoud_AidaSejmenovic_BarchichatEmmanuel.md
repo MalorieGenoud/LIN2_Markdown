@@ -14,7 +14,9 @@ Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pou
 
 [Télécharger Debian 8](https://www.debian.org/CD/http-ftp/#stable)
 
-Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le lien **amd64** puis choisissez un des liens d'images ISO disponibles
+Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le lien **amd64** puis choisissez un des liens d'images ISO disponibles.
+
+Pour installer la machine virtuelle, cliquez sur "File" et choisissez "New virtual machine" et suivez les différentes étapes pour la configuration de bases des ressources:
 
 **Processeurs:** 1
 
@@ -28,7 +30,9 @@ Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le 
 
 **Disque dur:** 60 GB
 
-**!!! NE PAS INSTALLER D'INTERFACE GRAPHIQUE !!!**
+Une fois la configuration faite, vous pouvez démarrer la machine virtuelle. Voici les étapes:
+
+**N'INSTALLEZ PAS D'INTERFACE GRAPHIQUE! FAÎTES UNE SIMPLE INSTALLATION!**
 
 **Langue** À choix
 
@@ -54,11 +58,11 @@ Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le 
 
 **Installer le programme de démarrage GRUB sur un disque dur:** Oui / Choisir "/dev/sda"
 
-## Les points à faire avant l'installation des services
+## Quelques réglages à faire avant l'installation des différents services
 
-Pour procéder aux différentes installations, il faut être connecté en **root**.
+Pour procéder aux différents réglages, il faut être connecté en **root**.
 
-Dans un premier temps, nous allons modifier quelques lignes afin d'avoir les mêmes dépots qui se synchronisent. On va éditer le fichier **sources.list** :
+Dans un premier temps, nous allons modifier quelques lignes dans le fichier **sources.list** afin d'avoir les mêmes dépots qui se synchronisent:
 
 `~# nano /etc/apt/sources.list`
 
@@ -74,19 +78,23 @@ Il faut commenter la `deb cdrom:[...]` en mettant **#** au début et ajouter les
 
 `deb http://mariadb.biz.net.id//repo/10.1/debian jessie main`
 
-Il faut sauvegarder le fichier et lancer la commande suivante afin de faire la mise à jour des dépôts :
+Sauvegardez le fichier et lancer la commande suivante afin de faire la mise à jour des dépôts :
 
 `~# apt-get update`
 
 `~# apt-get upgrade`
 
-Ces commandes éviterons quelques soucis lors de l'installation des différents services à l'avenir.
+Ces commandes permettent d'éviter quelques problèmes d'installations des services par la suite.
 
-Afin de faire en sorte que chacun des utilisateurs qui seront créés ne puissent pas accéder aux répertoires des autres utilisateurs, il faut modifier le umask de façon permanente. Voici la commande à faire:
+Il est aussi possible que lors de la fin de la mise à jour, vous ayez une voir deux lignes vous disant qu'il manque des clés. Vous pouvez passer outre de cette information car ceci n'a pas d'impact sur la suite mais si vous souhaitez installer les clés, voici un lien proposant diverses clés **GPG** :
+
+[Clé GPG](http://korben.info/keyserver-ubuntu-com-inaccessible-que-faire.html )
+
+Afin de faire en sorte que chacun des utilisateurs qui seront créés ne puissent pas accéder aux répertoires des autres utilisateurs, il faut modifier le umask de façon permanente. Il faut donc éditer le fichier **.bashrc**:
 
 `~# nano ~/.bashrc`
 
-Il faut ensuite changer la valeur par défaut du umask par `077` car ceci permettra qu'un utilisateur aura accès seulement à son propre répertoire.
+Changez la valeur par défaut du umask par `077` car ceci permettra qu'un utilisateur aura accès seulement à son propre répertoire.
 
 
 ## Installer et configurer le serveur OpenSSH
@@ -95,15 +103,15 @@ Commençons par installer **OpenSSH** avec la commande suivante:
 
 `~# apt-get install openssh-server`
 
-Maintenant on va faire une petite configuration du serveur car avec les dernières versions, il y a déjà une bonne configuration au niveau de la sécurité.
+Il n'y que quelques modifications à faire car avec les dernières versions il y a déjà une bonne configuration au niveau de la sécurité.
 
-On va commencer par éditer le fichier **sshd_config**:
+Commencez par éditer le fichier **sshd_config**:
 
 `~# nano /etc/ssh/sshd_config`
 
-On va modifier la ligne `PermitRootLogin   without-password` et remplacer le paramètre `without-password` par le paramètre `no` afin d'éviter une quelconque connexion avec l'utilisateur **root**.
+Modifiez la ligne `PermitRootLogin   without-password` et remplacez le paramètre `without-password` par le paramètre `no` afin d'éviter une quelconque connexion avec l'utilisateur **root**.
 
-Une fois le fichier sauvegardé, on va recharger la configuration ssh:
+Une fois le fichier sauvegardé, rechargez la configuration ssh:
 
 `~# /etc/init.d/ssh reload`
 
@@ -114,22 +122,20 @@ Pour installer **Nginx** il faut utiliser la commande suivante:
 
 `~# apt-get install nginx`
 
-Il est possible qu'il vous demande s'il faut installer les paquets sans vérification. Vous pouvez sans autre lui dire "oui".
-
-Maintenant on va démarrer le service :
+Maintenant démarrez le service :
 
 `~# service nginx start`
 
-On peut vérifier nos informations en pointant un moteur de recherche sur notre adresse IP, il devrait confirmer que **Nginx** a bien été installé. Pour trouver notre VPS IP adresse il faut taper la commande suivante :
+Il est possible de vérifier les informations en pointant le moteur de recherche sur notre adresse IP, il devrait confirmer que **Nginx** a bien été installé. Pour trouver votre VPS IP adresse il faut taper la commande suivante :
 
 `~# ifconfig eth0 | grep inet | awk  '{ print $2 }'`
 
-Pour la configuration, on ouvre le host virtuel avec la commande suivante :
+Pour la configuration, ouvrez le host virtuel avec la commande suivante :
 
 `~# nano /etc/nginx/conf.d/default.conf`
 
 Il faut changer certaines lignes du fichier, notamment le nom de votre serveur qui est dans l'exemple ci-dessous `NameServer`.
-Pour savoir votre nom de serveur et de hôte si besoin tapez la commande suivante :
+Pour savoir votre nom de serveur et d'hôte si besoin tapez la commande suivante :
 
 `~# nano /etc/hosts`
 
@@ -157,34 +163,34 @@ Voilà le résulat une fois les lignes changées :
       [...]
 
 
-Il reste une dernière étape à faire. Il faut maintenant ajouter **Nginx** au groupe des utilisateurs qui seront créer plus tard. Voici la commande:
+Il reste une dernière étape à faire. Ajoutez **Nginx** au groupe des utilisateurs qui seront créer plus tard. Voici la commande:
 
 `~# chown -R www-data:NameGroup /var/log/nginx && chmod g+s /var/log/nginx`
 
 
 ## Installer et configurer PHP-FPM
 
-Pour installer **PHP-FPM** il faut utiliser la commande suivante :
+Pour installer **PHP-FPM** il faut utiliser la commande suivante:
 
 `~# apt-get install php5-fpm php5-mysql`
 
-Nous allons maintenant nous occuper de configurer **PHP-FPM**. Pour ce faire, il faut faire un petit changement dans le fichier **php.ini**. Voici la commande à taper :
+Éditez le fichier **php.ini**:
 
 `~# nano /etc/php5/fpm/php.ini`
 
-Vous devez chercher et vérifier que la ligne suivante est écrite ainsi `cgi.fix_pathinfo=1`. La valeur à **1** permet d'avoir une meilleur sécurité au niveau de l'interpréteur PHP et change sa manière dont il va traiter les données qu'il recevra du serveur **Nginx**. Par contre si vous avez cette ligne-ci `cgi.fix_pathinfo=0`, changez la valeur **0** par **1**.
+Vous devez chercher et vérifier que la ligne suivante est écrite ainsi `cgi.fix_pathinfo=1`. La valeur à **1** permet d'avoir une meilleure sécurité au niveau de l'interpréteur PHP et change sa manière dont il va traiter les données qu'il recevra du serveur **Nginx**. Par contre si vous avez cette ligne-ci `cgi.fix_pathinfo=0`, changez la valeur **0** par **1**.
 
-Il y a une autre vérification à faire avant de passer à la suite. Utilisez la commande suivante :
+Il y a une autre vérification à faire avant de passer à la suite. Utilisez la commande suivante:
 
 `~# nano /etc/php5/fpm/pool.d/www.conf`
 
 Vous devez chercher et vérifier si la ligne suivante est écrite ainsi `listen = /var/run/php5-fpm.sock`. Ceci permettra de faire en sorte qu'il ne va pas "écouter" sur le réseau local mais sur un socket Unix. Si c'est le cas, ne changez pas la ligne. Par contre si ce n'est pas le cas, vous devriez avoir cette ligne-ci à la place `listen = 127.0.0.1:9000`, remplacez-la par `listen = /var/run/php5-fpm.sock`.
 
-Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédemment, nous allons le redémarrer. Voici la commande à taper :
+Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédemment, redémarrez-le:
 
 `~# service php5-fpm restart`
 
-Maintenant que tout a été configuré, nous pouvons créer un fichier d'informations. Voici la commande à taper :
+Maintenant que tout a été configuré, vous pouvez créer un fichier d'informations:
 
 `~# cd /usr/share/ngnix/html`
 
@@ -192,75 +198,34 @@ Maintenant que tout a été configuré, nous pouvons créer un fichier d'informa
 
 `~# nano info.php`
 
-Il est possible qu'à la place du dossier `html` vous ayez un dossier nommer `www`. Mais le principe reste le même.
+Il est possible qu'à la place du dossier `html` vous ayez un dossier nommer `www` car tout dépend de la version de **Nginx** qui a été chargée. Mais le principe reste le même.
 
 Écrivez la ligne suivante dans ce fichier :
 
 `<?php   phpinfo()   ?>`
 
-Redémarrez le serveur **Nginx** avec la commande suivante :
+Redémarrez le serveur **Nginx**:
 
 `~# service nginx restart`
 
 
 ## Installer et configurer MariaDB
 
-Dans cette partie, il est possible d'installer des clés **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clés **GPG** :
-
-[Clé GPG](http://korben.info/keyserver-ubuntu-com-inaccessible-que-faire.html )
-
-Afin d'être sûr d'avoir les dernières mises à jour des dépôts, nous allons faire une nouvelle mise à jour :
-
-`~# apt-get update`
-
-`~# apt-get upgrade`
-
-Voici la commande pour installer la base de données du côté serveur et du côté client :
+Pour installer **MariaDB**, utilisez la commande suivante:
 
 `~# apt-get install mariadb-server mariadb-client`
 
-À la suite de ça une fenêtre va s'ouvrir et demander l'ajout d'un mot de passe. Il est important de se souvenir de ce mot de passe car il sera réutilisé plus tard pour la connexion à la base de données.
+Par la suite une fenêtre va s'ouvrir en vous demandant d'insérer un mot de passe. Il est important que vous vous souveniez de ce mot de passe car il vous sera utile pour vous connctez à **MariaDB**.
 
 Exemple de mot de passe : `D08x97H$`
 
-Si l'installation se passe bien, vous pouvez vérifier la version de **MariaDB** afin d'être sûr que vous disposiez de la dernière version :
+Si l'installation se passe bien, vous pouvez vérifier la version de **MariaDB** afin d'être sûr que vous disposiez de la dernière version qui est la 10.0 :
 
 `~# mysql -V`
 
 Voici ce que vous devriez obtenir :
 
 `mysql  Ver 15.1 Distrib 10.0.22-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
-
-## COnfiguration pour les utilisateurs
-
-### Utilisation des diverses commandes dans MariaDB
-
-Dans cette partie, il est possible d'installer des clés **GPG** mais ceci n'a pas de réel impact sur l'installation, mais au cas où voici un lien proposant diverses clés **GPG** :
-
-[Clé GPG](http://korben.info/keyserver-ubuntu-com-inaccessible-que-faire.html )
-
-Afin d'être sûr d'avoir les dernières mises à jour des dépôts, nous allons faire une nouvelle mise à jour :
-
-`~# apt-get update`
-
-`~# apt-get upgrade`
-
-Voici la commande pour installer la base de données du côté serveur et du côté client :
-
-`~# apt-get install mariadb-server mariadb-client`
-
-À la suite de ça une fenêtre va s'ouvrir et demander l'ajout d'un mot de passe. Il est important de se souvenir de ce mot de passe car il sera réutilisé plus tard pour la connexion à la base de données.
-
-Exemple de mot de passe : `D08x97H$`
-
-Si l'installation se passe bien, vous pouvez vérifier la version de **MariaDB** afin d'être sûr que vous disposiez de la dernière version :
-
-`~# mysql -V`
-
-Voici ce que vous devriez obtenir :
-
-`mysql  Ver 15.1 Distrib 10.0.22-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
-
 
 ###   Utilisation des diverses commandes dans MariaDB
 
@@ -286,7 +251,7 @@ Maintenant quittez la base de données et connectez-vous avec l'utilisateur cré
 
 `~# mysql -u NameUser -p`
 
-Une fois connecté avec l'utilisateur créer précédemment, on va afficher les différentes bases de données actuelles :
+Une fois connecté avec l'utilisateur créer précédemment, vous piuvez afficher les différentes bases de données actuelles :
 
 `MariaDB[(none)]> SHOW DATABASES;`
 
@@ -314,35 +279,36 @@ Tapez la commande suivante pour voir les droits sur un ou tous les utilisateurs 
 `MariaDB [mysql]> SHOW GRANTS;`
 
 
-## Création des différents utilisateurs
+# Configuration des utilisateurs pour les différents services
 
-### Utilisateur standard
+## Utilisateur standard
 
-Il faut créer un répertoire qui regroupera tous les sites Web des utilisateurs. Il faut utiliser la commande suivante :
+Créez un répertoire qui regroupera les dossiers/fichiers des utilisateurs:
 
 `mkdir /home/Applications`
 
-Voici la commande à utiliser pour la création d'un utilisateur :
+VCréez un nouvel utilisateur :
 
 `~# adduser NameUser`
 
-On va maintenant créer un groupe commun à tous les utilisateurs et les ajouter dans ce groupe. Voici les commandes:
+Créez un groupe commun à tous les utilisateurs et ajoutez les dans ce groupe. Voici les commandes:
 
 `~# groupadd -g NameGroup`
 
 `~# usermod -g NameGroup NameUser`
 
-Dans le répertoire `mkdir /home/Applications/` nous allons créer le répertoire Webapp pour l'utilisateur créé:
+Dans le répertoire `mkdir /home/Applications/` créez le répertoire Webapp pour l'utilisateur créé:
 
 `mkdir /home/Applications/NameUser_Webapp`
 
-Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
+Maintenant attribuez l'utilisateur à son répertoire avec la commande suivante :
 
 `~# chown NameUser /home/Applications/NameUser_Webapp`
 
-### Utilisateur Nginx
 
-Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sont propre fichier de configuration. Nous allons donc modifier le fichier `/etc/nginx/conf.d/default.conf` par le nom de l'utilisateur `NameUser.conf`
+## Utilisateur Nginx
+
+Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sont propre fichier de configuration. Modifiez le fichier `/etc/nginx/conf.d/default.conf` par le nom de l'utilisateur `NameUser.conf`
 
     [...]
     server {
@@ -366,22 +332,22 @@ Il faut maintenant redémarrer le service:
 
 `~# /etc/init.d/nginx restart`
 
-Nous allons maintenant créer un répertoire pour chacun des utilisateurs dans `/etc/nginx/conf.d/` et faire en sorte que les utilisateurs n'aient accès qu'à leur répertoire:
+Créez un répertoire pour chacun des utilisateurs dans `/etc/nginx/conf.d/` qui regroupera leur site Web. Il n'est pas utile de retirez les droits pour les "others" car normalement le umask retire déjà les droits mais si vous voulez être sûr que les "others" n'ont pas le droits vous pouvez exéctutez les commandes suivantes:
 
-`~# chmod o-r /usr/share/nginx/conf.d`
+`~# chmod 770 /usr/share/nginx/conf.d/*`
+
+Vous pouvez maintenant créer le reépertoire pour chacun des utilisateurs et attribuer le dossier à l'utilisateur:
 
 `~# mkdir /etc/nginx/conf.d/NameUserRecord`
 
 `~# chown NameUser NameUserRecord`
 
-`~# chmod o-x /usr/share/nginx/conf.d/*`
 
+## Utilisateur PHP-FPM
 
-### Utilisateur PHP-FPM
+Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sa propre configuration. Copiez le fichier `/etc/php5/fpm/php.ini` et nommez le avec le nom de l'utilisateur `NameUser.ini`
 
-Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sa propre configuration. Nous allons donc faire une copie du fichier `/etc/php5/fpm/php.ini` et le nommer avec le nom de l'utilisateur `NameUser.ini`
-
-Modifier les informations suivantes
+Modifiez les informations suivantes:
 
     [www] -> [NameUser]
     user = Nameuser
@@ -392,11 +358,12 @@ Modifier les informations suivantes
     listen.owner = NameUser
     listen.group = NameUser
 
-Il faut maintenant redémarrer le service:
+Redémarrez le service:
 
 `~# /etc/init.d/php5-fpm restart`
 
-### Utilisateur MariaDB
+
+## Utilisateur MariaDB
 
 Pour chaque utilisateur qui sera créé par la suite, chacun aura accès seulement à sa propre base de données.
 
