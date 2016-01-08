@@ -18,7 +18,7 @@ Une fois que vous avez cliquez sur le lien, choisissez dans la partie **CD** le 
 
 **Mémoire:** 2GB
 
-**Processeurs:** 1
+**Nombre de processeurs:** 1
 
 **Disque dur:** 60 GB
 
