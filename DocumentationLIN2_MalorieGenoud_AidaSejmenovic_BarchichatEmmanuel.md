@@ -103,14 +103,15 @@ Voilà ce que vous devriez avoir une fois les lignes changées :
 
       [...]
       server {
-      listen       80;
+      root /usr/share/nginx/conf.d/default.conf;
+      listen 80;
       server_name  NameServer;
 
       location / {
           root   /usr/share/nginx/html;
           index index.php index.html index.htm index.nginx-debian.html;
+        }
       }
-     }
       [...]
 
 Il reste une dernière étape à faire. Il faut maintenant ajouter **Nginx** au groupe des utilisateurs qui seront créer plus tard. Voici la commande:
@@ -301,6 +302,50 @@ Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
 
 `~# chown NameUser /home/Applications/NameUser_Webapp`
 
+### Utilisateur Nginx
+
+Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sont propre fichier de configuration. Nous allons donc modifier le fichier `/etc/nginx/conf.d/default.conf` par le nom de l'utilisateur `NameUser.conf`
+
+    [...]
+    server {
+    listen 80;
+    root /usr/share/nginx/conf.d/NameUser;
+    server_name NameUser;
+    location / {
+            root   /usr/share/nginx/html;
+            index index.php index.html index.htm index.nginx-debian.html;
+      }
+    location ~ \.php$ {
+            try_files $uri =404;
+            fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+            include fastcgi_params;
+            fastcgi_pass unix:/var/run/NameUser.sock;
+      }
+    }
+    [...]
+
+Il faut maintenant redémarrer le service:
+
+`~# /etc/init.d/nginx restart`
+
+### Utilisateur PHP-FPM
+
+Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sa propre configuration. Nous allons donc faire une copie du fichier `/etc/php5/fpm/pool.d/www.conf` et le nommer avec le nom de l'utilisateur `NameUser.conf`
+
+Modifier les informations suivantes
+
+    [www] -> [NomUtilisateur]
+    user = Nameuser
+    group = NameGroup
+    [...]
+    listen = /var/run/NameUser.sock
+    [..]
+    listen.owner = NameUser
+    listen.group = NameUser
+
+Il faut maintenant redémarrer le service:
+
+`~# /etc/init.d/php5-fpm restart`
 
 ### Utilisateur MariaDB
 
