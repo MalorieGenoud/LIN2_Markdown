@@ -40,7 +40,7 @@ Il faut commenter la dernière ligne en mettant un **#** au début et ajouter le
 
 `deb http://mariadb.biz.net.id//repo/10.1/debian jessie main`
 
-Il faut sauvegarder le fichier et lancer la commande suivante afin de faire la mise à jour les dépôts :
+Il faut sauvegarder le fichier et lancer la commande suivante afin de faire la mise à jour des dépôts :
 
 `~# apt-get update`
 
@@ -265,7 +265,9 @@ Tapez la commande suivante pour voir les droits sur un ou tous les utilisateurs 
 `MariaDB [mysql]> SHOW GRANTS;`
 
 
-##   Création du répertoire pour les utilisateurs et gestions des droits
+## Création des différents utilisateurs
+
+### utilisateur standard
 
 Il faut créer un répertoire qui regroupera tous les sites Web des utilisateurs. Il faut utiliser la commande suivante :
 
@@ -275,12 +277,6 @@ Voici la commande à utiliser pour la création d'un utilisateur :
 
 `~# adduser NameUser`
 
-On va maintenant créer un groupe et assigner l'utilisateur créé précedemment à ce groupe:
-
-`groupadd NameGroup`
-
-`usermod -g NameGroup NameUser`
-
 Dans le répertoire `mkdir /home/Applications/` nous allons créer le répertoire Webapp pour l'utilisateur créé:
 
 `mkdir /home/Applications/NameUser_Webapp`
@@ -289,9 +285,12 @@ Maintenant on va l'attribuer à l'utilisateur avec la commande suivante :
 
 `~# chown NameUser /home/Applications/NameUser_Webapp`
 
-Nous allons modifier les droits du répertoire afin qu'aucun autre utilisateur puisse y accéder. Voici la commande à taper :
+### Utilisateur PHP-FPM
 
-`~# chmod 770 NameUser_Webapp`
+
+### Utilisateur MariaDB
+
+
 
 
 #   Source d'installation et de configuration
