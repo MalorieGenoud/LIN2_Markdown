@@ -1,6 +1,8 @@
-**Auteurs**: Barchichat Emmanuel, Genoud Malorie, Sejmenovic Aida
-**Date**: 08.01.2016
-**Version Debian utilisée**: 8
+**Auteurs:** Barchichat Emmanuel, Genoud Malorie, Sejmenovic Aida
+
+**Date:** 08.01.2016
+
+**Version Debian utilisée:** 8
 
 #   Configuration d'un hébergement de site Web
 
@@ -10,11 +12,15 @@
 
 Tout d'abord si vous ne possédez pas d'image ISo de debian 8, voici un lien pour télécharger lîmage ISO:
 
-[Télécharger Debian 8](https://www.debian.org/CD/http-ftp/)
+[Télécharger Debian 8](https://www.debian.org/CD/http-ftp/#stable)
 
-**Mémoire**: 2GB
-**Processeurs**: 1
-**Disque dur**: 60 GB
+Choisissez dans la partie **CD** le lien **amd64**
+
+**Mémoire:** 2GB
+
+**Processeurs:** 1
+
+**Disque dur:** 60 GB
 
 Pour procéder aux différentes installations, il faut être connecté en **root**.
 
