@@ -8,7 +8,7 @@
 
 **!!! TOUTE L'INSTALLATION A ÉTÉ FAITE SUR DEBIAN 8 EN "FROM SCRATCH" !!!**
 
-## Ressources utilisées et les points faire avant l'installation
+## Ressources utilisées et les points à faire avant l'installation
 
 Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pour télécharger l'image ISO:
 
@@ -334,7 +334,7 @@ Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chac
 
 Modifier les informations suivantes
 
-    [www] -> [NomUtilisateur]
+    [www] -> [NameUser]
     user = Nameuser
     group = NameGroup
     [...]
