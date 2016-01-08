@@ -8,7 +8,7 @@
 
 **!!! TOUTE L'INSTALLATION A ÉTÉ FAITE SUR DEBIAN 8 EN "FROM SCRATCH" !!!**
 
-## Ressources utilisées et les points à faire avant l'installation
+## Installation de la machine virtuelle
 
 Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pour télécharger l'image ISO:
 
@@ -16,11 +16,45 @@ Tout d'abord si vous ne possédez pas d'image ISO de Debian 8, voici un lien pou
 
 Une fois que vous avez cliqué sur le lien, choisissez dans la partie **CD** le lien **amd64** puis choisissez un des liens d'images ISO disponibles
 
-**Mémoire:** 2GB
-
 **Processeurs:** 1
 
+**Mémoire:** 2GB
+
+**Réseau:** NAT
+
+**SCSI Controller:** LSI Logic (recommandé)
+
+**Type de disque virtuel:** SCSI (recommandé)
+
 **Disque dur:** 60 GB
+
+**!!! NE PAS INSTALLER D'INTERFACE GRAPHIQUE !!!**
+
+**Langue** À choix
+
+**Situation géographique:** Â choix
+
+**Configuration clavier:** À choix
+
+**Nom de machine:** À choix
+
+**Domaine:** À choix
+
+**Mot de passe root:** À choix
+
+**Nom du nouvel utilisateur et mot de passe:** À choix
+
+**Partitionner les disques:** Assisté - utiliser un disque entier / Partitions /home, /var et /tmp séparées / Valider le partitionnement
+
+**Configurer l'outil de gestion des paquets:** Non / Non
+
+**Configuration de popularity-contest:** Non
+
+**Sélection des logiciels:** Décocher "environnement de bureau Debian" à l'aide de la touche "espace"
+
+**Installer le programme de démarrage GRUB sur un disque dur:** Oui / Choisir "/dev/sda"
+
+## Les points à faire avant l'installation des services
 
 Pour procéder aux différentes installations, il faut être connecté en **root**.
 
@@ -28,7 +62,7 @@ Dans un premier temps, nous allons modifier quelques lignes afin d'avoir les mê
 
 `~# nano /etc/apt/sources.list`
 
-Il faut commenter la dernière ligne en mettant un **#** au début et ajouter les lignes suivantes :
+Il faut commenter la `deb cdrom:[...]` en mettant **#** au début et ajouter les lignes suivantes :
 
 `deb http://nginx.org/packages/debian/ jessie nginx`
 
@@ -52,31 +86,31 @@ Afin de faire en sorte que chacun des utilisateurs qui seront créés ne puissen
 
 `~# nano ~/.bashrc`
 
-Il faut ensuite changer la valeur par défaut du umask par `077`
+Il faut ensuite changer la valeur par défaut du umask par `077` car ceci permettra qu'un utilisateur aura accès seulement à son propre répertoire.
 
 
 ## Installer et configurer le serveur OpenSSH
 
-Commençons par installer **OpenSSH** avec la commande suivante :
+Commençons par installer **OpenSSH** avec la commande suivante:
 
 `~# apt-get install openssh-server`
 
 Maintenant on va faire une petite configuration du serveur car avec les dernières versions, il y a déjà une bonne configuration au niveau de la sécurité.
 
-On va commencer par éditer le fichier **sshd_config** :
+On va commencer par éditer le fichier **sshd_config**:
 
 `~# nano /etc/ssh/sshd_config`
 
 On va modifier la ligne `PermitRootLogin   without-password` et remplacer le paramètre `without-password` par le paramètre `no` afin d'éviter une quelconque connexion avec l'utilisateur **root**.
 
-Une fois le fichier sauvegardé, on va recharger la configuration ssh :
+Une fois le fichier sauvegardé, on va recharger la configuration ssh:
 
 `~# /etc/init.d/ssh reload`
 
 
 ## Installer et configurer Nginx
 
-Pour installer **Nginx** il faut utiliser la commande suivante :
+Pour installer **Nginx** il faut utiliser la commande suivante:
 
 `~# apt-get install nginx`
 
@@ -99,11 +133,10 @@ Pour savoir votre nom de serveur et de hôte si besoin tapez la commande suivant
 
 `~# nano /etc/hosts`
 
-Voilà ce que vous devriez avoir une fois les lignes changées :
+Voilà le résulat une fois les lignes changées :
 
       [...]
       server {
-      root /usr/share/nginx/conf.d/default.conf;
       listen 80;
       server_name  NameServer;
 
@@ -112,7 +145,17 @@ Voilà ce que vous devriez avoir une fois les lignes changées :
           index index.php index.html index.htm index.nginx-debian.html;
         }
       }
+
       [...]
+
+      location ~ \.php$ {
+             proxy_pass   http://127.0.0.1;
+             fastcgi_pass unix:/var/run/php5-fpm.sock;
+             fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name$;
+             include fastcgi_params;
+      }
+      [...]
+
 
 Il reste une dernière étape à faire. Il faut maintenant ajouter **Nginx** au groupe des utilisateurs qui seront créer plus tard. Voici la commande:
 
@@ -131,7 +174,7 @@ Nous allons maintenant nous occuper de configurer **PHP-FPM**. Pour ce faire, il
 
 Vous devez chercher et vérifier que la ligne suivante est écrite ainsi `cgi.fix_pathinfo=1`. La valeur à **1** permet d'avoir une meilleur sécurité au niveau de l'interpréteur PHP et change sa manière dont il va traiter les données qu'il recevra du serveur **Nginx**. Par contre si vous avez cette ligne-ci `cgi.fix_pathinfo=0`, changez la valeur **0** par **1**.
 
-Il y a une dernière vérification à faire avant de passer à la suite. Utilisez la commande suivante :
+Il y a une autre vérification à faire avant de passer à la suite. Utilisez la commande suivante :
 
 `~# nano /etc/php5/fpm/pool.d/www.conf`
 
@@ -140,12 +183,6 @@ Vous devez chercher et vérifier si la ligne suivante est écrite ainsi `listen 
 Afin que **PHP-FPM** prenne en charge toutes les modifications faites précédemment, nous allons le redémarrer. Voici la commande à taper :
 
 `~# service php5-fpm restart`
-
-On commence par déclarer le socket Unix de PHP-FPM au niveau de Nginx pour que celui-ci puisse lui transmettre les requêtes PHP qu’il reçoit dans le fichier `/etc/nginx/conf.d/php5-fpm.conf`. Voici ce qu'il faut ajouter dans le fichier:
-
-     upstream php5-fpm-sock {
-        server unix:/var/run/php5-fpm.sock;
-     }
 
 Maintenant que tout a été configuré, nous pouvons créer un fichier d'informations. Voici la commande à taper :
 
@@ -194,6 +231,7 @@ Voici ce que vous devriez obtenir :
 
 `mysql  Ver 15.1 Distrib 10.0.22-MariaDB, for debian-linux-gnu (x86_64) using readline 5.2`
 
+## COnfiguration pour les utilisateurs
 
 ### Utilisation des diverses commandes dans MariaDB
 
@@ -328,9 +366,20 @@ Il faut maintenant redémarrer le service:
 
 `~# /etc/init.d/nginx restart`
 
+Nous allons maintenant créer un répertoire pour chacun des utilisateurs dans `/etc/nginx/conf.d/` et faire en sorte que les utilisateurs n'aient accès qu'à leur répertoire:
+
+`~# chmod o-r /usr/share/nginx/conf.d`
+
+`~# mkdir /etc/nginx/conf.d/NameUserRecord`
+
+`~# chown NameUser NameUserRecord`
+
+`~# chmod o-x /usr/share/nginx/conf.d/*`
+
+
 ### Utilisateur PHP-FPM
 
-Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sa propre configuration. Nous allons donc faire une copie du fichier `/etc/php5/fpm/pool.d/www.conf` et le nommer avec le nom de l'utilisateur `NameUser.conf`
+Il est nécessaire que pour chacun des utilisateurs qui seront créés, que chacun possède sa propre configuration. Nous allons donc faire une copie du fichier `/etc/php5/fpm/php.ini` et le nommer avec le nom de l'utilisateur `NameUser.ini`
 
 Modifier les informations suivantes
 
